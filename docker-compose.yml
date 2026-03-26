@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-liquibase
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Stiven2025*
+      POSTGRES_DB: Ambientes_Sp
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  liquibase:
+    image: liquibase/liquibase
+    container_name: liquibase-container
+    depends_on:
+      - postgres
+    volumes:
+      - ./:/liquibase/changelog
+      - ./postgresql-42.7.9.jar:/liquibase/lib/postgresql.jar
+    working_dir: /liquibase/changelog
+    command: >
+      --url=jdbc:postgresql://postgres:5432/Ambientes_Sp
+      --username=postgres
+      --password=Stiven2025*
+      --changeLogFile=01_tables/00-changelog.yaml
+      update
+
+volumes:
+  postgres_data:
